@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { WeatherCard } from "@/components/WeatherCard";
 import "@/lib/patchCopilotkit";
+import { AgentState, initialAgentState } from "@/lib/agentState";
 
 import { useCoAgent, useCopilotAction } from "@copilotkit/react-core";
 import { CopilotKitCSSProperties, CopilotSidebar } from "@copilotkit/react-ui";
@@ -39,20 +40,11 @@ export default function CopilotKitPage() {
   );
 }
 
-// State of the agent, make sure this aligns with your agent's state.
-type AgentState = {
-  proverbs: string[];
-}
-
 function YourMainContent({ themeColor }: { themeColor: string }) {
   // 🪁 Shared State: https://docs.copilotkit.ai/coagents/shared-state
   const {state, setState} = useCoAgent<AgentState>({
     name: "sample_agent",
-    initialState: {
-      proverbs: [
-        "CopilotKit may be new, but its the best thing since sliced bread.",
-      ],
-    },
+    initialState: initialAgentState,
   })
 
   // 🪁 Frontend Actions: https://docs.copilotkit.ai/coagents/frontend-actions
@@ -67,7 +59,8 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
     handler: ({ proverb }) => {
       setState({
         ...state,
-        proverbs: [...state?.proverbs || [], proverb],
+        proverbs: [...(state?.proverbs ?? []), proverb],
+        tasks: state?.tasks ?? initialAgentState.tasks,
       });
     },
   });
@@ -101,7 +94,7 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
         <p className="text-gray-200 text-center italic mb-6">This is a demonstrative page, but it could be anything you want! 🪁</p>
         <hr className="border-white/20 my-6" />
         <div className="flex flex-col gap-3">
-          {state.proverbs?.map((proverb, index) => (
+          {(state?.proverbs ?? initialAgentState.proverbs).map((proverb, index) => (
             <div 
               key={index} 
               className="bg-white/15 p-4 rounded-xl text-white relative group hover:bg-white/20 transition-all"
@@ -110,7 +103,8 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
               <button 
                 onClick={() => setState({
                   ...state,
-                  proverbs: state.proverbs?.filter((_, i) => i !== index),
+                  proverbs: state?.proverbs?.filter((_, i) => i !== index) ?? [],
+                  tasks: state?.tasks ?? initialAgentState.tasks,
                 })}
                 className="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity 
                   bg-red-500 hover:bg-red-600 text-white rounded-full h-6 w-6 flex items-center justify-center"
@@ -120,7 +114,7 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
             </div>
           ))}
         </div>
-        {state.proverbs?.length === 0 && <p className="text-center text-white/80 italic my-8">
+        {(state?.proverbs ?? initialAgentState.proverbs).length === 0 && <p className="text-center text-white/80 italic my-8">
           No proverbs yet. Ask the assistant to add some!
         </p>}
       </div>

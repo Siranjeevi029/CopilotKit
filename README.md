@@ -88,6 +88,11 @@ The main UI component is in `src/app/page.tsx`. You can:
 - Add new frontend actions
 - Customize the CopilotKit sidebar appearance
 
+### Demo Views
+
+- `src/app/page.tsx` – Proverbs playground that showcases shared state, frontend tools, and generative UI.
+- `src/app/tasks/page.tsx` – Task Command Center with task metadata, inline edits, and a comment stream. Use the top navigation bar to switch between demos.
+
 ## 📚 Documentation
 
 - [LlamaIndex Documentation](https://docs.llamaindex.com/introduction) - Learn more about LlamaIndex and its features
